@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head hexo-theme='https://github.com/volantis-x/hexo-theme-volantis/tree/4.3.1'>
+  <meta charset="utf-8">
+  <!-- SEO相关 -->
+  
+    
+  
+  <!-- 渲染优化 -->
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  <link rel='dns-prefetch' href='https://cdn.jsdelivr.net'>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <link rel="preload" href="../../../../../css/first.css" as="style">
+  
+
+  <!-- 页面元数据 -->
+  
+  <title>彻底搞清楚javascript中的require、import和export - Xie&#39;s Blog</title>
+  
+    <meta name="keywords" content="js模块加载方式">
+  
+
+  
+
+  <!-- feed -->
+  
+
+  <!-- import meta -->
+  
+
+  <!-- link -->
+  
+
+  <!-- import link -->
+  
+
+  
+    
+<link rel="stylesheet" href="../../../../../css/first.css">
+
+  
+
+  
+  <link rel="stylesheet" href="../../../../../css/style.css" media="print" onload="this.media='all';this.onload=null">
+  <noscript><link rel="stylesheet" href="../../../../../css/style.css"></noscript>
+  
+
+  <script id="loadcss"></script>
+
+  
+<script>
+if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMode))
+    document.write(
+	'<style>'+
+		'html{'+
+			'overflow-x: hidden !important;'+
+			'overflow-y: hidden !important;'+
+		'}'+
+		'.kill-ie{'+
+			'text-align:center;'+
+			'height: 100%;'+
+			'margin-top: 15%;'+
+			'margin-bottom: 5500%;'+
+		'}'+
+	'</style>'+
+    '<div class="kill-ie">'+
+        '<h1><b>抱歉，您的浏览器无法访问本站</b></h1>'+
+        '<h3>微软已经于2016年终止了对 Internet Explorer (IE) 10 及更早版本的支持，<br/>'+
+        '继续使用存在极大的安全隐患，请使用当代主流的浏览器进行访问。</h3><br/>'+
+        '<a target="_blank" rel="noopener" href="https://www.microsoft.com/zh-cn/WindowsForBusiness/End-of-IE-support"><strong>了解详情 ></strong></a>'+
+    '</div>');
+</script>
+
+
+<noscript>
+	<style>
+		html{
+			overflow-x: hidden !important;
+			overflow-y: hidden !important;
+		}
+		.kill-noscript{
+			text-align:center;
+			height: 100%;
+			margin-top: 15%;
+			margin-bottom: 5500%;
+		}
+	</style>
+    <div class="kill-noscript">
+        <h1><b>抱歉，您的浏览器无法访问本站</b></h1>
+        <h3>本页面需要浏览器支持（启用）JavaScript</h3><br/>
+        <a target="_blank" rel="noopener" href="https://www.baidu.com/s?wd=启用JavaScript"><strong>了解详情 ></strong></a>
+    </div>
+</noscript>
+
+</head>
+
+  <body>
+    
+
+<header id="l_header" class="l_header auto shadow blur show" style='opacity: 0' >
+  <div class='container'>
+  <div id='wrapper'>
+    <div class='nav-sub'>
+      <p class="title"></p>
+      <ul class='switcher nav-list-h m-phone' id="pjax-header-nav-list">
+        <li><a id="s-comment" class="fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li><a id="s-toc" class="s-toc fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+      </ul>
+    </div>
+		<div class="nav-main">
+      
+        
+        <a class="title flat-box" target="_self" href='../../../../../index.html'>
+          
+          
+          
+            coucouxie
+          
+        </a>
+      
+
+			<div class='menu navigation'>
+				<ul class='nav-list-h m-pc'>
+          
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=../../../../../index.html
+                  
+                  
+                  
+                    id="indexhtml"
+                  >
+                  <i class='fas fa-rss fa-fw'></i>博客
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=../../../../../categories/
+                  
+                  
+                  
+                    id="categories"
+                  >
+                  <i class='fas fa-folder-open fa-fw'></i>分类
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=../../../../../tags/
+                  
+                  
+                  
+                    id="tags"
+                  >
+                  <i class='fas fa-tags fa-fw'></i>标签
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=../../../../../archives/
+                  
+                  
+                  
+                    id="archives"
+                  >
+                  <i class='fas fa-archive fa-fw'></i>归档
+                </a>
+                
+              </li>
+            
+          
+          
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="Search..." />
+        </form>
+      </div>
+
+			<ul class='switcher nav-list-h m-phone'>
+				
+					<li><a class="s-search fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li>
+          <a class="s-menu fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a>
+          <ul class="menu-phone list-v navigation white-box">
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=../../../../../index.html
+                  
+                  
+                  
+                    id="indexhtml"
+                  >
+                  <i class='fas fa-rss fa-fw'></i>博客
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=../../../../../categories/
+                  
+                  
+                  
+                    id="categories"
+                  >
+                  <i class='fas fa-folder-open fa-fw'></i>分类
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=../../../../../tags/
+                  
+                  
+                  
+                    id="tags"
+                  >
+                  <i class='fas fa-tags fa-fw'></i>标签
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=../../../../../archives/
+                  
+                  
+                  
+                    id="archives"
+                  >
+                  <i class='fas fa-archive fa-fw'></i>归档
+                </a>
+                
+              </li>
+            
+          
+            
+          </ul>
+        </li>
+			</ul>
+		</div>
+	</div>
+  </div>
+</header>
+
+    <div id="l_body">
+      <div id="l_cover">
+  
+    
+        <div id="full" class='cover-wrapper post search' style="display: none;">
+          
+            <div class='cover-bg lazyload placeholder' data-bg="https://xie-image.oss-cn-beijing.aliyuncs.com/111.png"></div>
+          
+          <div class='cover-body'>
+  <div class='top'>
+    
+    
+      <p class="title">Xie-blog</p>
+    
+    
+      <p class="subtitle">少年游</p>
+    
+  </div>
+  <div class='bottom'>
+    
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <input type="text" class="input u-search-input" placeholder="探索你想知道的" />
+          <i class="icon fas fa-search fa-fw"></i>
+        </form>
+      </div>
+    
+    <div class='menu navigation'>
+      <div class='list-h'>
+        
+          
+            <a href="../../../../../index.html"
+              
+              
+              id="indexhtml">
+              <p>首页</p>
+            </a>
+          
+            <a href="../../../../../faqs/"
+              
+              
+              id="faqs">
+              <p>帮助</p>
+            </a>
+          
+            <a href="../../../../../examples/"
+              
+              
+              id="examples">
+              <p>示例</p>
+            </a>
+          
+            <a href="../../../../../contributors/"
+              
+              
+              id="contributors">
+              <p>社区</p>
+            </a>
+          
+            <a href="../../../../../archives/"
+              
+              
+              id="archives">
+              <p>博客</p>
+            </a>
+          
+            <a href="../../../../../https:/github.com/volantis-x/hexo-theme-volantis/"
+              
+              
+              id="https:githubcomvolantis-xhexo-theme-volantis">
+              <p>源码</p>
+            </a>
+          
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+          <div id="scroll-down" style="display: none;"><i class="fa fa-chevron-down scroll-down-effects"></i></div>
+        </div>
+    
+  
+  </div>
+
+      <div id="safearea">
+        <div class="body-wrapper" id="pjax-container">
+          
+
+<div class='l_main'>
+  <article class="article post white-box reveal md shadow article-type-post" id="post" itemscope itemprop="blogPost">
+  
+
+
+  
+  <div class="article-meta" id="top">
+    
+    
+    
+      <h1 class="title">
+        彻底搞清楚javascript中的require、import和export
+      </h1>
+      <div class='new-meta-box'>
+        
+          
+            
+<div class='new-meta-item author'>
+  <a class='author' href="" rel="nofollow">
+    <img no-lazy src="https://img-blog.csdnimg.cn/20210621161018954.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NvdWNvdXhpZQ==,size_16,color_FFFFFF,t_70">
+    <p>coucouxie</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  <div class='new-meta-item category'>
+    <a class='notlink'>
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <a class="category-link" href="../../../../../categories/js/">js</a>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>2021年9月28日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  <div class="new-meta-item browse leancloud">
+    <a class='notlink'>
+      
+      <div id="lc-pv" data-title="彻底搞清楚javascript中的require、import和export" data-path="">
+        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
+        <span id='number'><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span>
+        次浏览
+      </div>
+    </a>
+  </div>
+
+
+          
+        
+      </div>
+    
+  </div>
+
+
+  
+  
+  <h2 id="为什么有模块概念"><a href="#为什么有模块概念" class="headerlink" title="为什么有模块概念"></a>为什么有模块概念</h2><p>理想情况下，开发者只需要实现核心的业务逻辑，其他都可以加载别人已经写好的模块。</p>
+<p>但是，Javascript不是一种模块化编程语言，在es6以前，它是不支持”类”（class），所以也就没有”模块”（module）了。</p>
+<h2 id="require时代"><a href="#require时代" class="headerlink" title="require时代"></a>require时代</h2><p>Javascript社区做了很多努力，在现有的运行环境中，实现”模块”的效果。</p>
+<p>原始写法<br>模块就是实现特定功能的一组方法。<br>只要把不同的函数（以及记录状态的变量）简单地放在一起，就算是一个模块。<br>原始写法<br>模块就是实现特定功能的一组方法。<br>只要把不同的函数（以及记录状态的变量）简单地放在一起，就算是一个模块。</p>
+<pre><code class="js">
+function m1()&#123;
+　//...
+&#125;
+function m2()&#123;
+　//...　　
+&#125;
+</code></pre>
+<p>上面的函数m1()和m2()，组成一个模块。使用的时候，直接调用就行了。</p>
+<p>这种做法的缺点很明显：”污染”了全局变量，无法保证不与其他模块发生变量名冲突，而且模块成员之间看不出直接关系。</p>
+<h2 id="对象写法"><a href="#对象写法" class="headerlink" title="对象写法"></a>对象写法</h2><p>为了解决上面的缺点，可以把模块写成一个对象，所有的模块成员都放到这个对象里面</p>
+<pre><code class="js">var module1 = new Object(&#123;
+_count : 0,
+　m1 : function ()&#123;
+　　//...
+　&#125;,
+　m2 : function ()&#123;
+　　//...
+　&#125;
+&#125;);
+</code></pre>
+<p>上面的函数m1()和m2(），都封装在module1对象里。使用的时候，就是调用这个对象的属性</p>
+<ol>
+<li>module1.m1();</li>
+</ol>
+<p>这样的写法会暴露所有模块成员，内部状态可以被外部改写。比如，外部代码可以直接改变内部计数器的值。</p>
+<ol start="2">
+<li>module._count = 1;</li>
+</ol>
+<h2 id="立即执行函数写法"><a href="#立即执行函数写法" class="headerlink" title="立即执行函数写法"></a>立即执行函数写法</h2><p>使用”立即执行函数”（Immediately-Invoked Function Expression，IIFE），可以达到不暴露私有成员的目的</p>
+<pre><code class="js">var module = (function() &#123;
+var _count = 0;
+var m1 = function() &#123;
+alert(_count)
+&#125;
+var m2 = function() &#123;
+alert(_count + 1)
+&#125;
+ 
+return &#123;
+m1: m1,
+m2: m2
+&#125;
+&#125;)()
+</code></pre>
+<p>使用上面的写法，外部代码无法读取内部的_count变量。</p>
+<pre><code class="js">console.info(module._count); //undefined
+</code></pre>
+<p>module就是Javascript模块的基本写法。</p>
+<h2 id="主流模块规范"><a href="#主流模块规范" class="headerlink" title="主流模块规范"></a>主流模块规范</h2><p>在es6以前，还没有提出一套官方的规范,从社区和框架推广程度而言,目前通行的javascript模块规范有两种：CommonJS 和 AMD</p>
+<h3 id="CommonJS规范"><a href="#CommonJS规范" class="headerlink" title="CommonJS规范"></a>CommonJS规范</h3><p><img src="https://img-blog.csdnimg.cn/d1ce2fb380734e25ac7971df1bba033d.png" class="lazyload" data-srcset="https://img-blog.csdnimg.cn/d1ce2fb380734e25ac7971df1bba033d.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" alt="在这里插入图片描述"></p>
+<p>2009年，美国程序员Ryan Dahl创造了node.js项目，将javascript语言用于服务器端编程。</p>
+<p>这标志”Javascript模块化编程”正式诞生。前端的复杂程度有限，没有模块也是可以的，但是在服务器端，一定要有模块，与操作系统和其他应用程序互动，否则根本没法编程。</p>
+<p>node编程中最重要的思想之一就是模块，而正是这个思想，让JavaScript的大规模工程成为可能。模块化编程在js界流行，也是基于此，随后在浏览器端，requirejs和seajs之类的工具包也出现了，可以说在对应规范下，require统治了ES6之前的所有模块化编程，即使现在，在ES6 module被完全实现之前，还是这样。</p>
+<p>在CommonJS中,暴露模块使用module.exports和exports，很多人不明白暴露对象为什么会有两个,后面会介绍区别</p>
+<p>在CommonJS中，有一个全局性方法require()，用于加载模块。假定有一个数学模块math.js，就可以像下面这样加载。</p>
+<ol>
+<li>var math = require(‘math’);</li>
+</ol>
+<p>然后，就可以调用模块提供的方法：</p>
+<ol start="2">
+<li><p>var math = require(‘math’);</p>
+</li>
+<li><p>math.add(2,3); // 5</p>
+</li>
+</ol>
+<p>正是由于CommonJS 使用的require方式的推动，才有了后面的AMD、CMD 也采用的require方式来引用模块的风格</p>
+<h3 id="AMD规范"><a href="#AMD规范" class="headerlink" title="AMD规范"></a>AMD规范</h3><p><img src="https://img-blog.csdnimg.cn/203b6cfc9a2247f2bb30786d8fabfec2.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAY291Y291eGll,size_15,color_FFFFFF,t_70,g_se,x_16" class="lazyload" data-srcset="https://img-blog.csdnimg.cn/203b6cfc9a2247f2bb30786d8fabfec2.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAY291Y291eGll,size_15,color_FFFFFF,t_70,g_se,x_16" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" alt="在这里插入图片描述"><br>有了服务器端模块以后，很自然地，大家就想要客户端模块。而且最好两者能够兼容，一个模块不用修改，在服务器和浏览器都可以运行。</p>
+<p>但是，由于一个重大的局限，使得CommonJS规范不适用于浏览器环境。还是上一节的代码，如果在浏览器中运行，会有一个很大的问题</p>
+<ol>
+<li><p>var math = require(‘math’);</p>
+</li>
+<li><p>math.add(2, 3);</p>
+</li>
+</ol>
+<p>第二行math.add(2, 3)，在第一行require(‘math’)之后运行，因此必须等math.js加载完成。也就是说，如果加载时间很长，整个应用就会停在那里等。</p>
+<p>这对服务器端不是一个问题，因为所有的模块都存放在本地硬盘，可以同步加载完成，等待时间就是硬盘的读取时间。但是，对于浏览器，这却是一个大问题，因为模块都放在服务器端，等待时间取决于网速的快慢，可能要等很长时间，浏览器处于”假死”状态。<br>因此，浏览器端的模块，不能采用”同步加载”（synchronous），只能采用”异步加载”（asynchronous）。这就是AMD规范诞生的背景。</p>
+<p>AMD是”Asynchronous Module Definition”的缩写，意思就是”异步模块定义”。它采用异步方式加载模块，模块的加载不影响它后面语句的运行。所有依赖这个模块的语句，都定义在一个回调函数中，等到加载完成之后，这个回调函数才会运行。</p>
+<p>模块必须采用特定的define()函数来定义。</p>
+<p><strong>define(id?, dependencies?, factory)</strong></p>
+<ul>
+<li>id:字符串，模块名称(可选)</li>
+<li>dependencies: 是我们要载入的依赖模块(可选)，使用相对路径。,注意是数组格式</li>
+<li>factory: 工厂方法，返回一个模块函数</li>
+</ul>
+<p>如果一个模块不依赖其他模块，那么可以直接定义在define()函数之中。</p>
+<pre><code class="js">// math.js
+　　define(function ()&#123;
+　　　　var add = function (x,y)&#123;
+　　　　　　return x+y;
+　　　　&#125;;
+　　　　return &#123;
+　　　　　　add: add
+　　　　&#125;;
+　　&#125;);
+</code></pre>
+<p>如果这个模块还依赖其他模块，那么define()函数的第一个参数，必须是一个数组，指明该模块的依赖性。</p>
+<pre><code class="js">define([&#39;Lib&#39;], function(Lib)&#123;
+　　　　function foo()&#123;
+　　　　　　Lib.doSomething();
+　　　　&#125;
+　　　　return &#123;
+　　　　　　foo : foo
+　　　　&#125;;
+　　&#125;);
+</code></pre>
+<p>当require()函数加载上面这个模块的时候，就会先加载Lib.js文件。</p>
+<p>AMD也采用require()语句加载模块，但是不同于CommonJS，它要求两个参数：</p>
+<pre><code class="js">require([module], callback);
+</code></pre>
+<p>第一个参数[module]，是一个数组，里面的成员就是要加载的模块；第二个参数callback，则是加载成功之后的回调函数。如果将前面的代码改写成AMD形式，就是下面这样：</p>
+<pre><code class="js">require([&#39;math&#39;], function (math) &#123;
+　math.add(2, 3);
+&#125;);
+</code></pre>
+<p>math.add()与math模块加载不是同步的，浏览器不会发生假死。所以很显然，AMD比较适合浏览器环境。</p>
+<p>目前，主要有两个Javascript库实现了AMD规范：require.js和curl.js。</p>
+<h3 id="CMD规范"><a href="#CMD规范" class="headerlink" title="CMD规范"></a>CMD规范</h3><p><img src="https://img-blog.csdnimg.cn/0b1a9958ad1340298f18f9dc462a9502.png" class="lazyload" data-srcset="https://img-blog.csdnimg.cn/0b1a9958ad1340298f18f9dc462a9502.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" alt="在这里插入图片描述"></p>
+<p>CMD (Common Module Definition), 是seajs推崇的规范，CMD则是依赖就近，用的时候再require。它写起来是这样的：</p>
+<pre><code class="js">define(function(require, exports, module) &#123;
+var clock = require(&#39;clock&#39;);
+clock.start();
+&#125;);
+</code></pre>
+<p>CMD与AMD一样，也是采用特定的define()函数来定义,用require方式来引用模块</p>
+<pre><code class="js">define(id?, dependencies?, factory)
+</code></pre>
+<ul>
+<li>id:字符串，模块名称(可选)</li>
+<li>dependencies: 是我们要载入的依赖模块(可选)，使用相对路径。,注意是数组格式</li>
+<li>factory: 工厂方法，返回一个模块函数</li>
+</ul>
+<pre><code class="js">define(&#39;hello&#39;, [&#39;jquery&#39;], function(require, exports, module) &#123;
+ 
+// 模块代码
+ 
+&#125;);
+</code></pre>
+<p>如果一个模块不依赖其他模块，那么可以直接定义在define()函数之中。</p>
+<pre><code class="js">define(function(require, exports, module) &#123;
+// 模块代码
+&#125;);
+</code></pre>
+<blockquote>
+<p>注意：带 id 和 dependencies 参数的 define 用法不属于 CMD 规范，而属于 Modules/Transport 规范。</p>
+</blockquote>
+<h3 id="CMD与AMD区别"><a href="#CMD与AMD区别" class="headerlink" title="CMD与AMD区别"></a>CMD与AMD区别</h3><p>AMD和CMD最大的区别是对依赖模块的执行时机处理不同，而不是加载的时机或者方式不同，二者皆为异步加载模块。</p>
+<p>AMD依赖前置，js可以方便知道依赖模块是谁，立即加载；</p>
+<p>而CMD就近依赖，需要使用把模块变为字符串解析一遍才知道依赖了那些模块，这也是很多人诟病CMD的一点，牺牲性能来带来开发的便利性，实际上解析模块用的时间短到可以忽略。</p>
+<h2 id="现阶段的标准"><a href="#现阶段的标准" class="headerlink" title="现阶段的标准"></a>现阶段的标准</h2><p><img src="https://img-blog.csdnimg.cn/cbdfa015f6624d34ad6bce6714ac94a0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAY291Y291eGll,size_19,color_FFFFFF,t_70,g_se,x_16" class="lazyload" data-srcset="https://img-blog.csdnimg.cn/cbdfa015f6624d34ad6bce6714ac94a0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAY291Y291eGll,size_19,color_FFFFFF,t_70,g_se,x_16" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" alt="在这里插入图片描述"><br>ES6标准发布后，module成为标准，标准使用是以export指令导出接口，以import引入模块，但是在我们一贯的node模块中，我们依然采用的是CommonJS规范，使用require引入模块，使用module.exports导出接口。</p>
+<h3 id="export导出模块"><a href="#export导出模块" class="headerlink" title="export导出模块"></a>export导出模块</h3><p>export语法声明用于导出函数、对象、指定文件（或模块）的原始值。</p>
+<blockquote>
+<p>注意：在node中使用的是exports,不要混淆了</p>
+</blockquote>
+<p>export有两种模块导出方式：命名式导出（名称导出）和默认导出（定义式导出），命名式导出每个模块可以多个，而默认导出每个模块仅一个。</p>
+<pre><code class="js">export &#123; name1, name2, …, nameN &#125;;
+export &#123; variable1 as name1, variable2 as name2, …, nameN &#125;;
+export let name1, name2, …, nameN; // also var
+export let name1 = …, name2 = …, …, nameN; // also var, const
+ 
+export default expression;
+export default function (…) &#123; … &#125; // also class, function*
+export default function name1(…) &#123; … &#125; // also class, function*
+export &#123; name1 as default, … &#125;;
+ 
+export * from …;
+export &#123; name1, name2, …, nameN &#125; from …;
+export &#123; import1 as name1, import2 as name2, …, nameN &#125; from …;
+</code></pre>
+<ul>
+<li>name1… nameN－导出的“标识符”。导出后，可以通过这个“标识符”在另一个模块中使用import引用</li>
+<li>default－设置模块的默认导出。设置后import不通过“标识符”而直接引用默认导入</li>
+<li>－继承模块并导出继承模块所有的方法和属性</li>
+<li>as－重命名导出“标识符”</li>
+<li>from－从已经存在的模块、脚本文件…导出</li>
+</ul>
+<h3 id="命名式导出"><a href="#命名式导出" class="headerlink" title="命名式导出"></a>命名式导出</h3><p>模块可以通过export前缀关键词声明导出对象，导出对象可以是多个。这些导出对象用名称进行区分，称之为命名式导出。</p>
+<pre><code class="js">export &#123; myFunction &#125;; // 导出一个已定义的函数
+export const foo = Math.sqrt(2); // 导出一个常量
+</code></pre>
+<p>我们可以使用*和from关键字来实现的模块的继承：</p>
+<pre><code class="js">export * from &#39;article&#39;;
+</code></pre>
+<p>模块导出时，可以指定模块的导出成员。导出成员可以认为是类中的公有对象，而非导出成员可以认为是类中的私有对象：</p>
+<pre><code class="js">var name = &#39;IT笔录&#39;;
+var domain = &#39;http://itbilu.com&#39;;
+ 
+export &#123;name, domain&#125;; // 相当于导出
+&#123;name:name,domain:domain&#125;
+</code></pre>
+<p>模块导出时，我们可以使用as关键字对导出成员进行重命名：</p>
+<pre><code class="js">var name = &#39;IT笔录&#39;;
+var domain = &#39;http://itbilu.com&#39;;
+ 
+export &#123;name as siteName, domain&#125;;
+</code></pre>
+<p>注意，下面的语法有严重错误的情况：</p>
+<pre><code class="js">// 错误演示
+export 1; // 绝对不可以
+ 
+var a = 100;
+export a;
+</code></pre>
+<p>export在导出接口的时候，必须与模块内部的变量具有一一对应的关系。直接导出1没有任何意义，也不可能在import的时候有一个变量与之对应</p>
+<p>export a虽然看上去成立，但是a的值是一个数字，根本无法完成解构，因此必须写成export {a}的形式。即使a被赋值为一个function，也是不允许的。而且，大部分风格都建议，模块中最好在末尾用一个export导出所有的接口，例如：</p>
+<pre><code class="js">export &#123;fun as default,a,b,c&#125;;
+</code></pre>
+<h3 id="默认导出"><a href="#默认导出" class="headerlink" title="默认导出"></a>默认导出</h3><p>默认导出也被称做定义式导出。命名式导出可以导出多个值，但在在import引用时，也要使用相同的名称来引用相应的值。而默认导出每个导出只有一个单一值，这个输出可以是一个函数、类或其它类型的值，这样在模块import导入时也会很容易引用。</p>
+<pre><code class="js">export default function() &#123;&#125;; // 可以导出一个函数
+export default class()&#123;&#125;; // 也可以出一个类
+</code></pre>
+<h3 id="命名式导出与默认导出"><a href="#命名式导出与默认导出" class="headerlink" title="命名式导出与默认导出"></a>命名式导出与默认导出</h3><p>默认导出可以理解为另一种形式的命名导出，默认导出可以认为是使用了default名称的命名导出。</p>
+<p>下面两种导出方式是等价的：</p>
+<pre><code class="js">const D = 123;
+ 
+export default D;
+export &#123; D as default &#125;;
+</code></pre>
+<p><strong>export使用示例</strong><br>使用名称导出一个模块时：</p>
+<pre><code class="js">// &quot;my-module.js&quot; 模块
+export function cube(x) &#123;
+return x * x * x;
+&#125;
+const foo = Math.PI + Math.SQRT2;
+export &#123; foo &#125;;
+</code></pre>
+<p>在另一个模块（脚本文件）中，我们可以像下面这样引用：</p>
+<pre><code class="js">import &#123; cube, foo &#125; from &#39;my-module&#39;;
+console.log(cube(3)); // 27
+console.log(foo); // 4.555806215962888
+</code></pre>
+<p>使用默认导出一个模块时：</p>
+<pre><code class="js">// &quot;my-module.js&quot;模块
+export default function (x) &#123;
+return x * x * x;
+&#125;
+</code></pre>
+<p>在另一个模块（脚本文件）中，我们可以像下面这样引用，相对名称导出来说使用更为简单：</p>
+<pre><code class="js">// 引用 &quot;my-module.js&quot;模块
+import cube from &#39;my-module&#39;;
+console.log(cube(3)); // 27
+</code></pre>
+<h3 id="import引入模块"><a href="#import引入模块" class="headerlink" title="import引入模块"></a>import引入模块</h3><p>import语法声明用于从已导出的模块、脚本中导入函数、对象、指定文件（或模块）的原始值。</p>
+<p>import模块导入与export模块导出功能相对应，也存在两种模块导入方式：命名式导入（名称导入）和默认导入（定义式导入）。</p>
+<blockquote>
+<p>import的语法跟require不同，而且import必须放在文件的最开始，且前面不允许有其他逻辑代码，这和其他所有编程语言风格一致。</p>
+</blockquote>
+<pre><code class="js">import defaultMember from &quot;module-name&quot;;
+import * as name from &quot;module-name&quot;;
+import &#123; member &#125; from &quot;module-name&quot;;
+import &#123; member as alias &#125; from &quot;module-name&quot;;
+import &#123; member1 , member2 &#125; from &quot;module-name&quot;;
+import &#123; member1 , member2 as alias2 , [...] &#125; from &quot;module-name&quot;;
+import defaultMember, &#123; member [ , [...] ] &#125; from &quot;module-name&quot;;
+import defaultMember, * as name from &quot;module-name&quot;;
+import &quot;module-name&quot;;
+</code></pre>
+<ul>
+<li>name－从将要导入模块中收到的导出值的名称</li>
+<li>member, memberN－从导出模块，导入指定名称的多个成员</li>
+<li>defaultMember－从导出模块，导入默认导出成员</li>
+<li>alias, aliasN－别名，对指定导入成员进行的重命名</li>
+<li>module-name－要导入的模块。是一个文件名</li>
+<li>as－重命名导入成员名称（“标识符”）</li>
+<li>from－从已经存在的模块、脚本文件等导入</li>
+</ul>
+<h2 id="命名式导入"><a href="#命名式导入" class="headerlink" title="命名式导入"></a>命名式导入</h2><p>我们可以通过指定名称，就是将这些成员插入到当作用域中。导出时，可以导入单个成员或多个成员：</p>
+<p><strong>注意，花括号里面的变量与export后面的变量一一对应</strong></p>
+<pre><code class="js">import &#123;myMember&#125; from &quot;my-module&quot;;
+import &#123;foo, bar&#125; from &quot;my-module&quot;;
+</code></pre>
+<p>通过*符号，我们可以导入模块中的全部属性和方法。当导入模块全部导出内容时，就是将导出模块（’my-module.js’）所有的导出绑定内容，插入到当前模块（’myModule’）的作用域中：</p>
+<pre><code class="js">import * as myModule from &quot;my-module&quot;;
+</code></pre>
+<p>导入模块对象时，也可以使用as对导入成员重命名，以方便在当前模块内使用：</p>
+<pre><code class="js">import &#123;reallyReallyLongModuleMemberName as shortName&#125; from &quot;my-module&quot;;
+</code></pre>
+<p>导入多个成员时，同样可以使用别名：</p>
+<pre><code class="js">import &#123;reallyReallyLongModuleMemberName as shortName, anotherLongModuleName as short&#125; from &quot;my-module&quot;;
+</code></pre>
+<p>导入一个模块，但不进行任何绑定：</p>
+<pre><code class="js">import &quot;my-module&quot;;
+</code></pre>
+<h3 id="默认导入"><a href="#默认导入" class="headerlink" title="默认导入"></a>默认导入</h3><p>在模块导出时，可能会存在默认导出。同样的，在导入时可以使用import指令导出这些默认值。</p>
+<p>直接导入默认值：</p>
+<pre><code class="js">import myDefault from &quot;my-module&quot;;
+</code></pre>
+<p>也可以在命名空间导入和名称导入中，同时使用默认导入：</p>
+<pre><code class="js">import myDefault, * as myModule from &quot;my-module&quot;; // myModule 做为命名空间使用
+或
+ 
+import myDefault, &#123;foo, bar&#125; from &quot;my-module&quot;; // 指定成员导入
+</code></pre>
+<h3 id="import使用示例"><a href="#import使用示例" class="headerlink" title="import使用示例"></a>import使用示例</h3><pre><code class="js">// --file.js--
+function getJSON(url, callback) &#123;
+let xhr = new XMLHttpRequest();
+xhr.onload = function () &#123;
+callback(this.responseText)
+&#125;;
+xhr.open(&quot;GET&quot;, url, true);
+xhr.send();
+&#125;
+ 
+export function getUsefulContents(url, callback) &#123;
+getJSON(url, data =&gt; callback(JSON.parse(data)));
+&#125;
+ 
+// --main.js--
+import &#123; getUsefulContents &#125; from &quot;file&quot;;
+getUsefulContents(&quot;http://itbilu.com&quot;, data =&gt; &#123;
+doSomethingUseful(data);
+&#125;);
+</code></pre>
+<h3 id="default关键字"><a href="#default关键字" class="headerlink" title="default关键字"></a>default关键字</h3><pre><code class="js">// d.js
+export default function() &#123;&#125;
+ 
+// 等效于：
+function a() &#123;&#125;;
+export &#123;a as default&#125;;
+</code></pre>
+<p>在import的时候，可以这样用：</p>
+<pre><code class="js">import a from &#39;./d&#39;;
+ 
+// 等效于，或者说就是下面这种写法的简写，是同一个意思
+import &#123;default as a&#125; from &#39;./d&#39;;
+</code></pre>
+<p>这个语法糖的好处就是import的时候，可以省去花括号{}。</p>
+<p>简单的说，如果import的时候，你发现某个变量没有花括号括起来（没有*号），那么你在脑海中应该把它还原成有花括号的as语法。</p>
+<p>所以，下面这种写法你也应该理解了吧：</p>
+<pre><code class="js">import $,&#123;each,map&#125; from &#39;jquery&#39;;
+</code></pre>
+<p>import后面第一个$是{defalut as $}的替代写法。</p>
+<h3 id="as关键字"><a href="#as关键字" class="headerlink" title="as关键字"></a>as关键字</h3><p>as简单的说就是取一个别名,export中可以用，import中其实可以用：</p>
+<pre><code class="js">// a.js
+var a = function() &#123;&#125;;
+export &#123;a as fun&#125;;
+ 
+// b.js
+import &#123;fun as a&#125; from &#39;./a&#39;;
+a();
+</code></pre>
+<p>上面这段代码，export的时候，对外提供的接口是fun，它是a.js内部a这个函数的别名，但是在模块外面，认不到a，只能认到fun。</p>
+<p>import中的as就很简单，就是你在使用模块里面的方法的时候，给这个方法取一个别名，好在当前的文件里面使用。之所以是这样，是因为有的时候不同的两个模块可能通过相同的接口，比如有一个c.js也通过了fun这个接口：</p>
+<pre><code class="js">// c.js
+export function fun() &#123;&#125;;
+</code></pre>
+<p>如果在b.js中同时使用a和c这两个模块，就必须想办法解决接口重名的问题，as就解决了。</p>
+<h3 id="CommonJS中module-exports-与-exports的区别"><a href="#CommonJS中module-exports-与-exports的区别" class="headerlink" title="CommonJS中module.exports 与 exports的区别"></a>CommonJS中module.exports 与 exports的区别</h3><p><strong>Module.exports</strong></p>
+<blockquote>
+<p>The module.exports object is created by the Module system. Sometimes this is not acceptable; many want their module to be an instance of some class. To do this, assign the desired export object to module.exports. Note that assigning the desired object to exports will simply rebind the local exports variable, which is probably not what you want to do.</p>
+</blockquote>
+<p>译文：module.exports对象是由模块系统创建的。 有时这是难以接受的；许多人希望他们的模块成为某个类的实例。 为了实现这个，需要将期望导出的对象赋值给module.exports。 注意，将期望的对象赋值给exports会简单地重新绑定到本地exports变量上，这可能不是你想要的。</p>
+<p><strong>Module.exports</strong></p>
+<blockquote>
+<p>The exports variable is available within a module’s file-level scope, and is assigned the value of module.exports before the module is evaluated. It allows a shortcut, so that module.exports.f = … can be written more succinctly as exports.f = …. However, be aware that like any variable, if a new value is assigned to exports, it is no longer bound to module.exports:</p>
+</blockquote>
+<p>译文：exports变量是在模块的文件级别作用域内有效的，它在模块被执行前被赋于 module.exports 的值。它有一个快捷方式，以便 module.exports.f = … 可以被更简洁地写成exports.f = …。 注意，就像任何变量，如果一个新的值被赋值给exports，它就不再绑定到module.exports(其实是exports.属性会自动挂载到没有命名冲突的module.exports.属性)</p>
+<p>从Api文档上面的可以看出，从require导入方式去理解，关键有两个变量(全局变量module.exports，局部变量exports)、一个返回值(module.exports)</p>
+<pre><code class="js">function require(...) &#123;
+var module = &#123; exports: &#123;&#125; &#125;;
+((module, exports) =&gt; &#123;
+// 你的被引入代码 Start
+// var exports = module.exports = &#123;&#125;; (默认都有的)
+function some_func() &#123;&#125;;
+exports = some_func;
+// 此时，exports不再挂载到module.exports，
+// export将导出&#123;&#125;默认对象
+module.exports = some_func;
+// 此时，这个模块将导出some_func对象，覆盖exports上的some_func
+// 你的被引入代码 End
+&#125;)(module, module.exports);
+// 不管是exports还是module.exports，最后返回的还是module.exports
+return module.exports;
+&#125;
+</code></pre>
+<p><strong>demo.js:</strong></p>
+<pre><code class="js">
+console.log(exports); // &#123;&#125;
+console.log(module.exports); // &#123;&#125;
+console.log(exports === module.exports); // true
+console.log(exports == module.exports); // true
+console.log(module);
+/**
+Module &#123;
+id: &#39;.&#39;,
+exports: &#123;&#125;,
+parent: null,
+filename: &#39;/Users/larben/Desktop/demo.js&#39;,
+loaded: false,
+children: [],
+paths:
+[ &#39;/Users/larben/Desktop/node_modules&#39;,
+&#39;/Users/larben/node_modules&#39;,
+&#39;/Users/node_modules&#39;,
+&#39;/node_modules&#39; ] &#125;
+*/
+</code></pre>
+<p>注意</p>
+<ol>
+<li>每个js文件一创建，都有一个var exports = module.exports = {},使exports和module.exports都指向一个空对象。</li>
+<li>module.exports和exports所指向的内存地址相同</li>
+</ol>
+
+  
+  
+    
+    <div class='footer'>
+      
+      
+      
+        <div class='copyright'>
+          <blockquote>
+            
+              
+                <p>博客内容遵循 署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</p>
+
+              
+            
+              
+                <p>本文永久链接是：<a href=http://example.com/child#%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/2021/09/28/js/%E5%BD%BB%E5%BA%95%E6%90%9E%E6%B8%85%E6%A5%9Ajavascript%E4%B8%AD%E7%9A%84require%E3%80%81import%E5%92%8Cexport/>http://example.com/child#%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/2021/09/28/js/%E5%BD%BB%E5%BA%95%E6%90%9E%E6%B8%85%E6%A5%9Ajavascript%E4%B8%AD%E7%9A%84require%E3%80%81import%E5%92%8Cexport/</a></p>
+              
+            
+          </blockquote>
+        </div>
+      
+      
+    </div>
+  
+  
+    
+
+
+  <div class='article-meta' id="bottom">
+    <div class='new-meta-box'>
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-09-28T23:47:57+08:00">
+  <a class='notlink'>
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：2021年9月28日</p>
+  </a>
+</div>
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="../../../../../tags/js%E6%A8%A1%E5%9D%97%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>js模块加载方式</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://example.com/child#%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/2021/09/28/js/%E5%BD%BB%E5%BA%95%E6%90%9E%E6%B8%85%E6%A5%9Ajavascript%E4%B8%AD%E7%9A%84require%E3%80%81import%E5%92%8Cexport/&title=彻底搞清楚javascript中的require、import和export - Xie's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qq.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qq.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://example.com/child#%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/2021/09/28/js/%E5%BD%BB%E5%BA%95%E6%90%9E%E6%B8%85%E6%A5%9Ajavascript%E4%B8%AD%E7%9A%84require%E3%80%81import%E5%92%8Cexport/&title=彻底搞清楚javascript中的require、import和export - Xie's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qzone.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qzone.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="http://service.weibo.com/share/share.php?url=http://example.com/child#%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/2021/09/28/js/%E5%BD%BB%E5%BA%95%E6%90%9E%E6%B8%85%E6%A5%9Ajavascript%E4%B8%AD%E7%9A%84require%E3%80%81import%E5%92%8Cexport/&title=彻底搞清楚javascript中的require、import和export - Xie's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/weibo.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/weibo.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </div>
+
+
+  
+  
+
+  
+    <div class="prev-next">
+      
+        <a class='prev' href='../%E5%AF%B9%E8%B1%A1%E5%B1%9E%E6%80%A7%E5%AD%98%E5%9C%A8%E4%B8%8E%E5%90%A6%E7%9A%84%E5%88%A4%E6%96%AD/'>
+          <p class='title'><i class="fas fa-chevron-left" aria-hidden="true"></i>对象属性存在与否的判断</p>
+          <p class='content'>1.存在性对于一个对象myObject中某个属性是否存在与否的判断，如 myObject.a 的属性访问返回值可能是 undefined，但是这个值有可能 是属性中存储的 undefined，也...</p>
+        </a>
+      
+      
+        <a class='next' href='../javascript%E4%B8%AD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/'>
+          <p class='title'>JavaScript中的操作符<i class="fas fa-chevron-right" aria-hidden="true"></i></p>
+          <p class='content'>一元操作符只操作一个值的操作符叫一元操作符（unary operator）。一元操作符是ECMAScript中最简单的操作符。
+递增/递减操作符递增和递减操作符直接照搬自C语言，但有两个版本：前...</p>
+        </a>
+      
+    </div>
+  
+</article>
+
+
+  
+
+  <article class="post white-box reveal shadow" id="comments">
+    <p ct><i class='fas fa-comments'></i> 评论</p>
+    
+    <div id="valine_container" class="valine_thread">
+  <i class="fas fa-cog fa-spin fa-fw fa-2x"></i>
+</div>
+
+  </article>
+
+
+
+
+
+
+</div>
+<aside class='l_side'>
+  
+  
+    
+    
+
+
+
+  <section class="widget toc-wrapper shadow desktop mobile" id="toc-div" >
+    
+  <header>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+  </header>
+
+
+    <div class='content'>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%89%E6%A8%A1%E5%9D%97%E6%A6%82%E5%BF%B5"><span class="toc-text">为什么有模块概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#require%E6%97%B6%E4%BB%A3"><span class="toc-text">require时代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%86%99%E6%B3%95"><span class="toc-text">对象写法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0%E5%86%99%E6%B3%95"><span class="toc-text">立即执行函数写法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%B5%81%E6%A8%A1%E5%9D%97%E8%A7%84%E8%8C%83"><span class="toc-text">主流模块规范</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CommonJS%E8%A7%84%E8%8C%83"><span class="toc-text">CommonJS规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AMD%E8%A7%84%E8%8C%83"><span class="toc-text">AMD规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CMD%E8%A7%84%E8%8C%83"><span class="toc-text">CMD规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CMD%E4%B8%8EAMD%E5%8C%BA%E5%88%AB"><span class="toc-text">CMD与AMD区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%B0%E9%98%B6%E6%AE%B5%E7%9A%84%E6%A0%87%E5%87%86"><span class="toc-text">现阶段的标准</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#export%E5%AF%BC%E5%87%BA%E6%A8%A1%E5%9D%97"><span class="toc-text">export导出模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E5%90%8D%E5%BC%8F%E5%AF%BC%E5%87%BA"><span class="toc-text">命名式导出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E5%AF%BC%E5%87%BA"><span class="toc-text">默认导出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E5%90%8D%E5%BC%8F%E5%AF%BC%E5%87%BA%E4%B8%8E%E9%BB%98%E8%AE%A4%E5%AF%BC%E5%87%BA"><span class="toc-text">命名式导出与默认导出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#import%E5%BC%95%E5%85%A5%E6%A8%A1%E5%9D%97"><span class="toc-text">import引入模块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E5%90%8D%E5%BC%8F%E5%AF%BC%E5%85%A5"><span class="toc-text">命名式导入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E5%AF%BC%E5%85%A5"><span class="toc-text">默认导入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#import%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="toc-text">import使用示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#default%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">default关键字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#as%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">as关键字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CommonJS%E4%B8%ADmodule-exports-%E4%B8%8E-exports%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">CommonJS中module.exports 与 exports的区别</span></a></li></ol></li></ol>
+    </div>
+  </section>
+
+
+  
+
+
+</aside>
+
+
+
+		  
+		  <!--此文件用来存放一些不方便取值的变量-->
+<!--思路大概是将值藏到重加载的区域内-->
+
+<script>
+  window.pdata={}
+  pdata.ispage=true;
+  pdata.postTitle="彻底搞清楚javascript中的require、import和export";
+  pdata.commentPath="";
+  pdata.commentPlaceholder="";
+  // header 这里无论是否开启pjax都需要
+  var l_header=document.getElementById("l_header");
+  
+  l_header.classList.add("show");
+  
+  
+    // cover
+    var cover_wrapper=document.querySelector('.cover-wrapper');
+    
+    cover_wrapper.id="none";
+    cover_wrapper.style.display="none";
+    
+  
+</script>
+
+        </div>
+        
+  
+  <footer class="footer clearfix">
+    <br><br>
+    
+      
+        <div class="aplayer-container">
+          
+
+
+        </div>
+      
+    
+      
+        <br>
+        <div class="social-wrapper">
+          
+            
+          
+            
+          
+            
+          
+        </div>
+      
+    
+      
+        <div><p>博客内容遵循 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+      
+    
+      
+        
+          <div><p><span id="lc-sv">本站总访问量为 <span id='number'><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span> 次</span> <span id="lc-uv">访客数为 <span id='number'><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span> 人</span></p>
+</div>
+        
+      
+    
+      
+        本站使用
+        <a href="https://github.com/volantis-x/hexo-theme-volantis/tree/4.3.1" target="_blank" class="codename">Volantis</a>
+        作为主题
+      
+    
+      
+        <div class='copyright'>
+        <p><a href="/">Copyright © 2017-2020 XXX</a></p>
+
+        </div>
+      
+    
+  </footer>
+
+
+        <a id="s-top" class="fas fa-arrow-up fa-fw" href="javascript:void(0)"></a>
+      </div>
+    </div>
+    <div>
+      <script>
+/************这个文件存放不需要重载的全局变量和全局函数*********/
+window.volantis={};
+window.volantis.loadcss=document.getElementById("loadcss");
+/******************** Pjax ********************************/
+function VPjax(){
+	this.list=[] // 存放回调函数
+	this.start=()=>{
+	  for(var i=0;i<this.list.length;i++){
+		this.list[i].run();
+	  }
+	}
+	this.push=(fn,name)=>{
+		var f=new PjaxItem(fn,name);
+		this.list.push(f);
+	}
+	// 构造一个可以run的对象
+	function PjaxItem(fn,name){
+		// 函数名称
+		this.name = name || fn.name
+		// run方法
+		this.run=()=>{
+			fn()
+		}
+	}
+}
+volantis.pjax={}
+volantis.pjax.method={
+	complete: new VPjax(),
+	error: new VPjax(),
+	send: new VPjax()
+}
+volantis.pjax={
+	...volantis.pjax,
+	push: volantis.pjax.method.complete.push,
+	error: volantis.pjax.method.error.push,
+	send: volantis.pjax.method.send.push
+}
+/********************脚本懒加载函数********************************/
+// 已经加入了setTimeout
+function loadScript(src, cb) {
+	setTimeout(function() {
+		var HEAD = document.getElementsByTagName('head')[0] || document.documentElement;
+		var script = document.createElement('script');
+		script.setAttribute('type','text/javascript');
+		if (cb) script.onload = cb;
+		script.setAttribute('src', src);
+		HEAD.appendChild(script);
+	});
+}
+//https://github.com/filamentgroup/loadCSS
+var loadCSS = function( href, before, media, attributes ){
+	var doc = window.document;
+	var ss = doc.createElement( "link" );
+	var ref;
+	if( before ){
+		ref = before;
+	}
+	else {
+		var refs = ( doc.body || doc.getElementsByTagName( "head" )[ 0 ] ).childNodes;
+		ref = refs[ refs.length - 1];
+	}
+	var sheets = doc.styleSheets;
+	if( attributes ){
+		for( var attributeName in attributes ){
+			if( attributes.hasOwnProperty( attributeName ) ){
+				ss.setAttribute( attributeName, attributes[attributeName] );
+			}
+		}
+	}
+	ss.rel = "stylesheet";
+	ss.href = href;
+	ss.media = "only x";
+	function ready( cb ){
+		if( doc.body ){
+			return cb();
+		}
+		setTimeout(function(){
+			ready( cb );
+		});
+	}
+	ready( function(){
+		ref.parentNode.insertBefore( ss, ( before ? ref : ref.nextSibling ) );
+	});
+	var onloadcssdefined = function( cb ){
+		var resolvedHref = ss.href;
+		var i = sheets.length;
+		while( i-- ){
+			if( sheets[ i ].href === resolvedHref ){
+				return cb();
+			}
+		}
+		setTimeout(function() {
+			onloadcssdefined( cb );
+		});
+	};
+	function loadCB(){
+		if( ss.addEventListener ){
+			ss.removeEventListener( "load", loadCB );
+		}
+		ss.media = media || "all";
+	}
+	if( ss.addEventListener ){
+		ss.addEventListener( "load", loadCB);
+	}
+	ss.onloadcssdefined = onloadcssdefined;
+	onloadcssdefined( loadCB );
+	return ss;
+};
+</script>
+<script>
+  
+  loadCSS("https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14/css/all.min.css", window.volantis.loadcss);
+  
+  
+  loadCSS("https://cdn.jsdelivr.net/gh/l-lin/font-awesome-animation/dist/font-awesome-animation.min.css", window.volantis.loadcss);
+  
+  
+  
+  loadCSS("https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10/build/styles/solarized-light.min.css", window.volantis.loadcss);
+  
+</script>
+<!-- required -->
+
+<script src="../../../../../https:/cdn.bootcdn.net/ajax/libs/jquery/3.5.0/jquery.js"></script>
+
+<script>
+  function pjax_fancybox() {
+    $(".md .gallery").find("img").each(function () { //渲染 fancybox
+      var element = document.createElement("a"); // a 标签
+      $(element).attr("class", "fancybox");
+      $(element).attr("pjax-fancybox", "");  // 过滤 pjax
+      $(element).attr("href", $(this).attr("src"));
+      if ($(this).attr("data-original")) {
+        $(element).attr("href", $(this).attr("data-original"));
+      }
+      $(element).attr("data-fancybox", "images");
+      var caption = "";   // 描述信息
+      if ($(this).attr('alt')) {  // 判断当前页面是否存在描述信息
+        $(element).attr('data-caption', $(this).attr('alt'));
+        caption = $(this).attr('alt');
+      }
+      var div = document.createElement("div");
+      $(div).addClass("fancybox");
+      $(this).wrap(div); // 最外层套 div ，其实主要作用还是 class 样式
+      var span = document.createElement("span");
+      $(span).addClass("image-caption");
+      $(span).text(caption); // 加描述
+      $(this).after(span);  // 再套一层描述
+      $(this).wrap(element);  // 最后套 a 标签
+    })
+    $(".md .gallery").find("img").fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+      closeClick: true,
+      helpers: {
+        overlay: {closeClick: true}
+      },
+      buttons: [
+        "zoom",
+        "close"
+      ]
+    });
+  };
+  function SCload_fancybox() {
+    if ($(".md .gallery").find("img").length == 0) return;
+    loadCSS("https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css", document.getElementById("loadcss"));
+    loadScript('https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', pjax_fancybox)
+  };
+  $(function () {
+    SCload_fancybox();
+  });
+  function Pjax_SCload_fancybox(){
+	if (typeof $.fancybox == "undefined") {
+	 SCload_fancybox();
+    } else {
+	 pjax_fancybox();
+    }
+  }
+  volantis.pjax.push(Pjax_SCload_fancybox)
+  volantis.pjax.send(()=>{
+      if (typeof $.fancybox != "undefined") {
+        $.fancybox.close();    // 关闭弹窗
+      }
+  },'fancybox')
+</script>
+
+
+<!-- internal -->
+
+
+
+
+<script>
+  function loadIssuesJS() {
+    if ($(".md").find(".issues-api").length == 0) return;
+	
+	  loadScript('../../../../../js/issues.js');
+	
+  };
+  $(function () {
+    loadIssuesJS();
+  });
+  volantis.pjax.push(()=>{
+	if (typeof IssuesAPI == "undefined") {
+	  loadIssuesJS();
+	}
+  },"IssuesJS")
+</script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazyload",
+    threshold: 0
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    lazyLoadInstance.update();
+  });
+  document.addEventListener('pjax:complete', function () {
+    lazyLoadInstance.update();
+  });
+</script>
+
+
+
+
+  
+
+<script>
+  window.FPConfig = {
+	delay: 0,
+	ignoreKeywords: [],
+	maxRPS: 5,
+	hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+<script src="../../../../../js/valine.js"></script>
+
+
+<script>
+  function emoji(path, idx, ext) {
+    return path + "/" + path + "-" + idx + "." + ext;
+  }
+  var emojiMaps = {};
+  for (var i = 1; i <= 54; i++) {
+    emojiMaps['tieba-' + i] = emoji('tieba', i, 'png');
+  }
+  for (var i = 1; i <= 101; i++) {
+    emojiMaps['qq-' + i] = emoji('qq', i, 'gif');
+  }
+  for (var i = 1; i <= 116; i++) {
+    emojiMaps['aru-' + i] = emoji('aru', i, 'gif');
+  }
+  for (var i = 1; i <= 125; i++) {
+    emojiMaps['twemoji-' + i] = emoji('twemoji', i, 'png');
+  }
+  for (var i = 1; i <= 4; i++) {
+    emojiMaps['weibo-' + i] = emoji('weibo', i, 'png');
+  }
+  function pjax_valine() {
+    if(!document.querySelectorAll("#valine_container")[0])return;
+    let pagePlaceholder = pdata.commentPlaceholder || "快来评论吧~";
+    let path = pdata.commentPath;
+    if (path.length == 0) {
+      let defaultPath = '';
+      path = defaultPath || decodeURI(window.location.pathname);
+    }
+    var valine = new Valine();
+    valine.init(Object.assign({"path":null,"placeholder":"快来评论吧~","appId":null,"appKey":null,"meta":["nick","mail","link"],"requiredFields":["nick","mail"],"enableQQ":true,"recordIP":false,"avatar":"robohash","pageSize":5,"lang":"zh-cn","highlight":true,"mathJax":false}, {
+      el: '#valine_container',
+      path: path,
+      placeholder: pagePlaceholder,
+      emojiCDN: 'https://cdn.jsdelivr.net/gh/volantis-x/cdn-emoji/valine/',
+      emojiMaps: emojiMaps,
+    }))
+  }
+  $(function () {
+    pjax_valine();
+  });
+  volantis.pjax.push(pjax_valine);
+</script>
+
+
+
+
+
+
+  
+<script src="../../../../../js/app.js"></script>
+
+
+
+<!-- optional -->
+
+  <script>
+const SearchServiceimagePath="https://cdn.jsdelivr.net/gh/volantis-x/cdn-volantis@master/img/";
+const ROOT =  ("/" || "/").endsWith('/') ? ("/" || "/") : ("//" || "/" );
+
+$('.input.u-search-input').one('focus',function(){
+	
+		loadScript('../../../../../js/search/hexo.js',setSearchService);
+	
+})
+
+function listenSearch(){
+  
+    customSearch = new HexoSearch({
+      imagePath: SearchServiceimagePath
+    });
+  
+}
+function setSearchService() {
+	listenSearch();
+	
+		document.addEventListener("pjax:success", listenSearch);
+	
+}
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+<script src="../../../../../https:/cdn.jsdelivr.net/gh/highlightjs/cdn-release@10/build/highlight.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+volantis.pjax.push(()=>{
+	document.querySelectorAll('pre code').forEach((block) => {
+	  hljs.highlightBlock(block);
+	});
+},"highlightjs")
+</script>
+
+
+
+  <script defer>
+
+  const LCCounter = {
+    app_id: 'u9j57bwJod4EDmXWdxrwuqQT-MdYXbMMI',
+    app_key: 'jfHtEKVE24j0IVCGHbvuFClp',
+    custom_api_server: '',
+
+    // 查询存储的记录
+    getRecord(Counter, url, title) {
+      return new Promise(function (resolve, reject) {
+        Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({url})))
+          .then(resp => resp.json())
+          .then(({results, code, error}) => {
+            if (code === 401) {
+              throw error;
+            }
+            if (results && results.length > 0) {
+              var record = results[0];
+              resolve(record);
+            } else {
+              Counter('post', '/classes/Counter', {url, title: title, times: 0})
+                .then(resp => resp.json())
+                .then((record, error) => {
+                  if (error) {
+                    throw error;
+                  }
+                  resolve(record);
+                }).catch(error => {
+                console.error('Failed to create', error);
+                reject(error);
+              });
+            }
+          }).catch((error) => {
+          console.error('LeanCloud Counter Error:', error);
+          reject(error);
+        });
+      })
+    },
+
+    // 发起自增请求
+    increment(Counter, incrArr) {
+      return new Promise(function (resolve, reject) {
+        Counter('post', '/batch', {
+          "requests": incrArr
+        }).then((res) => {
+          res = res.json();
+          if (res.error) {
+            throw res.error;
+          }
+          resolve(res);
+        }).catch((error) => {
+          console.error('Failed to save visitor count', error);
+          reject(error);
+        });
+      });
+    },
+
+    // 构建自增请求体
+    buildIncrement(objectId) {
+      return {
+        "method": "PUT",
+        "path": `/1.1/classes/Counter/${ objectId }`,
+        "body": {
+          "times": {
+            '__op': 'Increment',
+            'amount': 1
+          }
+        }
+      }
+    },
+
+    // 校验是否为有效的 UV
+    validUV() {
+      var key = 'LeanCloudUVTimestamp';
+      var flag = localStorage.getItem(key);
+      if (flag) {
+        // 距离标记小于 24 小时则不计为 UV
+        if (new Date().getTime() - parseInt(flag) <= 86400000) {
+          return false;
+        }
+      }
+      localStorage.setItem(key, new Date().getTime().toString());
+      return true;
+    },
+
+    addCount(Counter) {
+      var enableIncr = '' === 'true' && window.location.hostname !== 'localhost';
+      enableIncr = true;
+      var getterArr = [];
+      var incrArr = [];
+      // 请求 PV 并自增
+      var pvCtn = document.querySelector('#lc-sv');
+      if (pvCtn || enableIncr) {
+        var pvGetter = this.getRecord(Counter, 'http://example.com/child#绑定域名' + '/#lc-sv', 'Visits').then((record) => {
+          incrArr.push(this.buildIncrement(record.objectId))
+          var eles = document.querySelectorAll('#lc-sv #number');
+          if (eles.length > 0) {
+            eles.forEach((el,index,array)=>{
+              el.innerText = record.times + 1;
+              if (pvCtn) {
+                pvCtn.style.display = 'inline';
+              }
+            })
+          }
+        });
+        getterArr.push(pvGetter);
+      }
+
+      // 请求 UV 并自增
+      var uvCtn = document.querySelector('#lc-uv');
+      if (uvCtn || enableIncr) {
+        var uvGetter = this.getRecord(Counter, 'http://example.com/child#绑定域名' + '/#lc-uv', 'Visitors').then((record) => {
+          var vuv = this.validUV();
+          vuv && incrArr.push(this.buildIncrement(record.objectId))
+          var eles = document.querySelectorAll('#lc-uv #number');
+          if (eles.length > 0) {
+            eles.forEach((el,index,array)=>{
+              el.innerText = record.times + (vuv ? 1 : 0);
+              if (uvCtn) {
+                uvCtn.style.display = 'inline';
+              }
+            })
+          }
+        });
+        getterArr.push(uvGetter);
+      }
+
+      // 请求文章的浏览数，如果是当前页面就自增
+      var allPV = document.querySelectorAll('#lc-pv');
+      if (allPV.length > 0 || enableIncr) {
+        for (i = 0; i < allPV.length; i++) {
+          let pv = allPV[i];
+          let title = pv.getAttribute('data-title');
+          var url = 'http://example.com/child#绑定域名' + pv.getAttribute('data-path');
+          if (url) {
+            var viewGetter = this.getRecord(Counter, url, title).then((record) => {
+              // 是当前页面就自增
+              let curPath = window.location.pathname;
+              if (curPath.includes('index.html')) {
+                curPath = curPath.substring(0, curPath.lastIndexOf('index.html'));
+              }
+              if (pv.getAttribute('data-path') == curPath) {
+                incrArr.push(this.buildIncrement(record.objectId));
+              }
+              if (pv) {
+                var ele = pv.querySelector('#lc-pv #number');
+                if (ele) {
+                  if (pv.getAttribute('data-path') == curPath) {
+                    ele.innerText = (record.times || 0) + 1;
+                  } else {
+                    ele.innerText = record.times || 0;
+                  }
+                  pv.style.display = 'inline';
+                }
+              }
+            });
+            getterArr.push(viewGetter);
+          }
+        }
+      }
+
+      // 如果启动计数自增，批量发起自增请求
+      if (enableIncr) {
+        Promise.all(getterArr).then(() => {
+          incrArr.length > 0 && this.increment(Counter, incrArr);
+        })
+      }
+
+    },
+
+
+    fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${ api_server }/1.1${ url }`, {
+          method,
+          headers: {
+            'X-LC-Id': this.app_id,
+            'X-LC-Key': this.app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      this.addCount(Counter);
+    },
+
+    refreshCounter() {
+      var api_server = this.app_id.slice(-9) !== '-MdYXbMMI' ? this.custom_api_server : `https://${ this.app_id.slice(0, 8).toLowerCase() }.api.lncldglobal.com`;
+      if (api_server) {
+        this.fetchData(api_server);
+      } else {
+        fetch('https://app-router.leancloud.cn/2/route?appId=' + this.app_id)
+          .then(resp => resp.json())
+          .then(({api_server}) => {
+            this.fetchData('https://' + api_server);
+          });
+      }
+    }
+
+  };
+
+  LCCounter.refreshCounter();
+
+  document.addEventListener('pjax:complete', function () {
+    LCCounter.refreshCounter();
+  });
+</script>
+
+
+
+
+  <script>
+const rootElement = document.documentElement;
+const darkModeStorageKey = "user-color-scheme";
+const rootElementDarkModeAttributeName = "data-user-color-scheme";
+
+const setLS = (k, v) => {
+    localStorage.setItem(k, v);
+};
+
+const removeLS = (k) => {
+    localStorage.removeItem(k);
+};
+
+const getLS = (k) => {
+    return localStorage.getItem(k);
+};
+
+const getModeFromCSSMediaQuery = () => {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+};
+
+const resetRootDarkModeAttributeAndLS = () => {
+  rootElement.removeAttribute(rootElementDarkModeAttributeName);
+  removeLS(darkModeStorageKey);
+};
+
+const validColorModeKeys = {
+  dark: true,
+  light: true,
+};
+
+const applyCustomDarkModeSettings = (mode) => {
+  const currentSetting = mode || getLS(darkModeStorageKey);
+
+  if (currentSetting === getModeFromCSSMediaQuery()) {
+    resetRootDarkModeAttributeAndLS();
+  } else if (validColorModeKeys[currentSetting]) {
+    rootElement.setAttribute(rootElementDarkModeAttributeName, currentSetting);
+  } else {
+    resetRootDarkModeAttributeAndLS();
+  }
+};
+
+const invertDarkModeObj = {
+  dark: "light",
+  light: "dark",
+};
+
+/**
+ * get target mode
+ */
+const toggleCustomDarkMode = () => {
+  let currentSetting = getLS(darkModeStorageKey);
+
+  if (validColorModeKeys[currentSetting]) {
+    currentSetting = invertDarkModeObj[currentSetting];
+  } else if (currentSetting === null) {
+    currentSetting = invertDarkModeObj[getModeFromCSSMediaQuery()];
+  } else {
+    return;
+  }
+  setLS(darkModeStorageKey, currentSetting);
+  return currentSetting;
+};
+
+/**
+ * bind click event for toggle button
+ */
+var btn=$("#wrapper .toggle-mode-btn,#rightmenu-wrapper .toggle-mode-btn");
+function bindToggleButton() {
+    btn.on('click',(e) => {
+      const mode = toggleCustomDarkMode();
+      applyCustomDarkModeSettings(mode);
+    });
+}
+
+applyCustomDarkModeSettings();
+document.addEventListener("DOMContentLoaded", bindToggleButton);
+volantis.pjax.push(bindToggleButton);
+volantis.pjax.send(()=>{
+	btn.unbind('click');
+},'toggle-mode-btn-unbind');
+</script>
+
+
+
+
+
+
+
+
+<script>
+function listennSidebarTOC() {
+  const navItems = document.querySelectorAll(".toc li");
+  if (!navItems.length) return;
+  const sections = [...navItems].map((element) => {
+    const link = element.querySelector(".toc-link");
+    const target = document.getElementById(
+      decodeURI(link.getAttribute("href")).replace("#", "")
+    );
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      window.scrollTo({
+		top: target.offsetTop + 100,
+		
+		behavior: "smooth"
+		
+	  });
+    });
+    return target;
+  });
+
+  function activateNavByIndex(target) {
+    if (target.classList.contains("active-current")) return;
+
+    document.querySelectorAll(".toc .active").forEach((element) => {
+      element.classList.remove("active", "active-current");
+    });
+    target.classList.add("active", "active-current");
+    let parent = target.parentNode;
+    while (!parent.matches(".toc")) {
+      if (parent.matches("li")) parent.classList.add("active");
+      parent = parent.parentNode;
+    }
+  }
+
+  function findIndex(entries) {
+    let index = 0;
+    let entry = entries[index];
+    if (entry.boundingClientRect.top > 0) {
+      index = sections.indexOf(entry.target);
+      return index === 0 ? 0 : index - 1;
+    }
+    for (; index < entries.length; index++) {
+      if (entries[index].boundingClientRect.top <= 0) {
+        entry = entries[index];
+      } else {
+        return sections.indexOf(entry.target);
+      }
+    }
+    return sections.indexOf(entry.target);
+  }
+
+  function createIntersectionObserver(marginTop) {
+    marginTop = Math.floor(marginTop + 10000);
+    let intersectionObserver = new IntersectionObserver(
+      (entries, observe) => {
+        let scrollHeight = document.documentElement.scrollHeight + 100;
+        if (scrollHeight > marginTop) {
+          observe.disconnect();
+          createIntersectionObserver(scrollHeight);
+          return;
+        }
+        let index = findIndex(entries);
+        activateNavByIndex(navItems[index]);
+      },
+      {
+        rootMargin: marginTop + "px 0px -100% 0px",
+        threshold: 0,
+      }
+    );
+    sections.forEach((element) => {
+      element && intersectionObserver.observe(element);
+    });
+  }
+  createIntersectionObserver(document.documentElement.scrollHeight);
+}
+
+document.addEventListener("DOMContentLoaded", listennSidebarTOC);
+document.addEventListener("pjax:success", listennSidebarTOC);
+</script>
+
+<!-- more -->
+
+ 
+	   
+	    
+
+
+<script src="../../../../../https:/cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script>
+
+
+<script>
+    var pjax;
+    document.addEventListener('DOMContentLoaded', function () {
+      pjax = new Pjax({
+        elements: 'a[href]:not([href^="#"]):not([href="javascript:void(0)"]):not([pjax-fancybox])',
+        selectors: [
+          "title",
+          
+          "#pjax-container",
+          "#pjax-header-nav-list"
+        ],
+        cacheBust: false,   // url 地址追加时间戳，用以避免浏览器缓存
+        timeout: 5000
+      });
+    });
+
+    document.addEventListener('pjax:send', function (e) {
+      //window.stop(); // 相当于点击了浏览器的停止按钮
+
+      try {
+        var currentUrl = window.location.pathname;
+        var targetUrl = e.triggerElement.href;
+        var banUrl = [""];
+        if (banUrl[0] != "") {
+          banUrl.forEach(item => {
+            if(currentUrl.indexOf(item) != -1 || targetUrl.indexOf(item) != -1) {
+              window.location.href = targetUrl;
+            }
+          });
+        }
+      } catch (error) {}
+
+      window.subData = null; // 移除标题（用于一二级导航栏切换处）
+
+      volantis.$switcher.removeClass('active'); // 关闭移动端激活的搜索框
+      volantis.$header.removeClass('z_search-open'); // 关闭移动端激活的搜索框
+      volantis.$wrapper.removeClass('sub'); // 跳转页面时关闭二级导航
+
+      // 解绑事件 避免重复监听
+      volantis.$topBtn.unbind('click');
+      $('.menu a').unbind('click');
+      $(window).unbind('resize');
+      $(window).unbind('scroll');
+      $(document).unbind('scroll');
+      $(document).unbind('click');
+      $('body').unbind('click');
+	  // 使用 volantis.pjax.send 方法传入pjax:send回调函数 参见layout/_partial/scripts/global.ejs
+	  volantis.pjax.method.send.start();
+    });
+
+    document.addEventListener('pjax:complete', function () {
+      $('.nav-main').find('.list-v').not('.menu-phone').removeAttr("style",""); // 移除小尾巴的移除
+      $('.menu-phone.list-v').removeAttr("style",""); // 移除小尾巴的移除
+      $('script[data-pjax], .pjax-reload script').each(function () {
+        $(this).parent().append($(this).remove());
+      });
+      try{
+		// 使用 volantis.pjax.push 方法传入重载函数 参见layout/_partial/scripts/global.ejs
+		volantis.pjax.method.complete.start();
+      } catch (e) {
+        console.log(e);
+      }
+    });
+
+    document.addEventListener('pjax:error', function (e) {
+	  // 使用 volantis.pjax.error 方法传入pjax:error回调函数 参见layout/_partial/scripts/global.ejs
+	  volantis.pjax.method.error.start();
+      window.location.href = e.triggerElement.href;
+    });
+</script>
+ 
+	  
+    </div>
+  </body>
+</html>
